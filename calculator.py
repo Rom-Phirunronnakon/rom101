@@ -10,7 +10,10 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
+start = "0"
+first = 0
+second = 0
+operation = ""
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -46,16 +49,16 @@ class Ui_MainWindow(object):
         self.minusmemo = QtWidgets.QPushButton(self.centralwidget)
         self.minusmemo.setGeometry(QtCore.QRect(170, 70, 31, 31))
         self.minusmemo.setObjectName("minusmemo")
-        self.goback = QtWidgets.QPushButton(self.centralwidget)
+        self.goback = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("GB"))
         self.goback.setGeometry(QtCore.QRect(10, 110, 31, 31))
         self.goback.setObjectName("goback")
-        self.plusminus = QtWidgets.QPushButton(self.centralwidget)
+        self.plusminus = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("PM"))
         self.plusminus.setGeometry(QtCore.QRect(130, 110, 31, 31))
         self.plusminus.setObjectName("plusminus")
-        self.squareroot = QtWidgets.QPushButton(self.centralwidget)
+        self.squareroot = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.square_it())
         self.squareroot.setGeometry(QtCore.QRect(170, 110, 31, 31))
         self.squareroot.setObjectName("squareroot")
-        self.clearinput = QtWidgets.QPushButton(self.centralwidget)
+        self.clearinput = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("CE"))
         self.clearinput.setGeometry(QtCore.QRect(50, 110, 31, 31))
         self.clearinput.setObjectName("clearinput")
         self.clear = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("C"))
@@ -64,7 +67,7 @@ class Ui_MainWindow(object):
         self.seven = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("7"))
         self.seven.setGeometry(QtCore.QRect(10, 150, 31, 31))
         self.seven.setObjectName("seven")
-        self.divide = QtWidgets.QPushButton(self.centralwidget)
+        self.divide = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.divide_it())
         self.divide.setGeometry(QtCore.QRect(130, 150, 31, 31))
         self.divide.setObjectName("divide")
         self.percent = QtWidgets.QPushButton(self.centralwidget)
@@ -79,10 +82,10 @@ class Ui_MainWindow(object):
         self.four = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("4"))
         self.four.setGeometry(QtCore.QRect(10, 190, 31, 31))
         self.four.setObjectName("four")
-        self.multiply = QtWidgets.QPushButton(self.centralwidget)
+        self.multiply = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.multiply_it())
         self.multiply.setGeometry(QtCore.QRect(130, 190, 31, 31))
         self.multiply.setObjectName("multiply")
-        self.equal = QtWidgets.QPushButton(self.centralwidget)
+        self.equal = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.equal_to())
         self.equal.setGeometry(QtCore.QRect(170, 230, 31, 71))
         self.equal.setObjectName("equal")
         self.five = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("5"))
@@ -94,10 +97,10 @@ class Ui_MainWindow(object):
         self.zero = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("0"))
         self.zero.setGeometry(QtCore.QRect(10, 270, 71, 31))
         self.zero.setObjectName("zero")
-        self.add = QtWidgets.QPushButton(self.centralwidget)
+        self.add = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.add_it())
         self.add.setGeometry(QtCore.QRect(130, 270, 31, 31))
         self.add.setObjectName("add")
-        self.point = QtWidgets.QPushButton(self.centralwidget)
+        self.point = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("."))
         self.point.setGeometry(QtCore.QRect(90, 270, 31, 31))
         self.point.setObjectName("point")
         self.two = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("2"))
@@ -106,7 +109,7 @@ class Ui_MainWindow(object):
         self.one = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("1"))
         self.one.setGeometry(QtCore.QRect(10, 230, 31, 31))
         self.one.setObjectName("one")
-        self.minus = QtWidgets.QPushButton(self.centralwidget)
+        self.minus = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.minus_it())
         self.minus.setGeometry(QtCore.QRect(130, 230, 31, 31))
         self.minus.setObjectName("minus")
         self.three = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("3"))
@@ -127,10 +130,95 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
     def press_it(self, pressed):
+        global start
+        global first
+        global second
         if pressed == "C":
-            self.label.setText("0")
+            start = "0"
+            first = 0
+            self.label.setText(start)
+        elif pressed == "CE":
+            start = "0"
+            second = 0
+            self.label.setText(start)
+        elif pressed == "PM":
+            start = str(float(start)*(-1))
+            self.label.setText(start)
+        elif pressed == "GB":
+            if len(start) > 1:
+                start = start[:-1]
+                self.label.setText(start)
+            elif len(start) == 1:
+                start = "0"
+                self.label.setText(start)
+        elif start == "0":
+            start = pressed
+            self.label.setText(start)
         else:
-            self.label.setText(f'{self.label.text()}{pressed}')
+            start += pressed
+            self.label.setText(start)
+    def add_it(self):
+        global start
+        global first
+        global operation
+        first = float(start)
+        operation = "+"
+        self.label.setText("")
+        start = "0"
+    def minus_it(self):
+        global start
+        global first
+        global operation
+        first = float(start)
+        operation = "-"
+        self.label.setText("")
+        start = "0"
+    def multiply_it(self):
+        global start
+        global first
+        global operation
+        first = float(start)
+        operation = "*"
+        self.label.setText("")
+        start = "0"
+    def divide_it(self):
+        global start
+        global first
+        global operation
+        first = float(start)
+        operation = "/"
+        self.label.setText("")
+        start = "0"
+    def equal_to(self):
+        global start
+        global first
+        global second
+        second = float(start)
+        if operation == "+":
+            self.label.setText(str(first+second))
+            start = "0"
+            first = 0
+            second = 0
+        elif operation == "-":
+            self.label.setText(str(first-second))
+            start = "0"
+            first = 0
+            second = 0
+        elif operation == "*":
+            self.label.setText(str(first*second))
+            start = "0"
+            first = 0
+            second = 0
+        elif operation == "/" and second != 0:
+            self.label.setText(str(first/second))
+            start = "0"
+            first = 0
+            second = 0
+    def square_it(self):
+        global start
+        if float(start) >= 0:
+            self.label.setText(str(float(start)**0.5))
+            start = "0"
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
