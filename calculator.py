@@ -14,6 +14,9 @@ start = "0"
 first = 0
 second = 0
 operation = ""
+count_point = 0
+mem = 0
+new = 0
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -34,19 +37,19 @@ class Ui_MainWindow(object):
         self.label.setFrameShadow(QtWidgets.QFrame.Plain)
         self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label.setObjectName("label")
-        self.memoclear = QtWidgets.QPushButton(self.centralwidget)
+        self.memoclear = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.memory("MC"))
         self.memoclear.setGeometry(QtCore.QRect(10, 70, 31, 31))
         self.memoclear.setObjectName("memoclear")
-        self.memorecall = QtWidgets.QPushButton(self.centralwidget)
+        self.memorecall = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.memory("MR"))
         self.memorecall.setGeometry(QtCore.QRect(50, 70, 31, 31))
         self.memorecall.setObjectName("memorecall")
-        self.memosave = QtWidgets.QPushButton(self.centralwidget)
+        self.memosave = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.memory("MS"))
         self.memosave.setGeometry(QtCore.QRect(90, 70, 31, 31))
         self.memosave.setObjectName("memosave")
-        self.addmemo = QtWidgets.QPushButton(self.centralwidget)
+        self.addmemo = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.memory("M+"))
         self.addmemo.setGeometry(QtCore.QRect(130, 70, 31, 31))
         self.addmemo.setObjectName("addmemo")
-        self.minusmemo = QtWidgets.QPushButton(self.centralwidget)
+        self.minusmemo = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.memory("M-"))
         self.minusmemo.setGeometry(QtCore.QRect(170, 70, 31, 31))
         self.minusmemo.setObjectName("minusmemo")
         self.goback = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("GB"))
@@ -70,7 +73,7 @@ class Ui_MainWindow(object):
         self.divide = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.divide_it())
         self.divide.setGeometry(QtCore.QRect(130, 150, 31, 31))
         self.divide.setObjectName("divide")
-        self.percent = QtWidgets.QPushButton(self.centralwidget)
+        self.percent = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("%"))
         self.percent.setGeometry(QtCore.QRect(170, 150, 31, 31))
         self.percent.setObjectName("percent")
         self.eight = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("8"))
@@ -115,7 +118,7 @@ class Ui_MainWindow(object):
         self.three = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("3"))
         self.three.setGeometry(QtCore.QRect(90, 230, 31, 31))
         self.three.setObjectName("three")
-        self.oneover = QtWidgets.QPushButton(self.centralwidget)
+        self.oneover = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("OO"))
         self.oneover.setGeometry(QtCore.QRect(170, 190, 31, 31))
         self.oneover.setObjectName("oneover")
         MainWindow.setCentralWidget(self.centralwidget)
@@ -133,34 +136,58 @@ class Ui_MainWindow(object):
         global start
         global first
         global second
+        global count_point
+        global new
         if pressed == "C":
             start = "0"
             first = 0
-            self.label.setText(start)
+            self.label.setText("%.9s" %start)
         elif pressed == "CE":
             start = "0"
             second = 0
-            self.label.setText(start)
+            self.label.setText("%.9s" %start)
         elif pressed == "PM":
             start = str(float(start)*(-1))
-            self.label.setText(start)
+            self.label.setText("%.9s" %start)
         elif pressed == "GB":
             if len(start) > 1:
                 start = start[:-1]
-                self.label.setText(start)
+                self.label.setText("%.9s" %start)
             elif len(start) == 1:
                 start = "0"
-                self.label.setText(start)
+                self.label.setText("%.9s" %start)
+        elif pressed == "OO":
+            if start != "0":
+                start = str(1/float(start))
+                self.label.setText("%.9s" %start)
+        elif pressed == ".":
+            if count_point == 0:
+                start += pressed
+                self.label.setText("%.9s" %start)
+                count_point += 1
+        elif pressed == "%":
+            new = float(start)/100
+            if operation == "+":
+                start = float(start)*(1+new)
+            elif operation == "-":
+                start = float(start)*(1-new)
+            elif operation == "*":
+                start = float(start)*new
+            elif operation == "/":
+                start = float(start)/new
+            self.label.setText("%.9s" %start)
         elif start == "0":
             start = pressed
-            self.label.setText(start)
+            self.label.setText("%.9s" %start)
         else:
             start += pressed
-            self.label.setText(start)
+            self.label.setText("%.9s" %start)
     def add_it(self):
         global start
         global first
         global operation
+        global count_point
+        count_point = 0
         first = float(start)
         operation = "+"
         self.label.setText("")
@@ -169,6 +196,8 @@ class Ui_MainWindow(object):
         global start
         global first
         global operation
+        global count_point
+        count_point = 0
         first = float(start)
         operation = "-"
         self.label.setText("")
@@ -177,6 +206,8 @@ class Ui_MainWindow(object):
         global start
         global first
         global operation
+        global count_point
+        count_point = 0
         first = float(start)
         operation = "*"
         self.label.setText("")
@@ -185,6 +216,8 @@ class Ui_MainWindow(object):
         global start
         global first
         global operation
+        global count_point
+        count_point = 0
         first = float(start)
         operation = "/"
         self.label.setText("")
@@ -193,32 +226,55 @@ class Ui_MainWindow(object):
         global start
         global first
         global second
+        global count_point
         second = float(start)
         if operation == "+":
-            self.label.setText(str(first+second))
+            self.label.setText("%.9s" %str(first+second))
             start = "0"
             first = 0
             second = 0
+            count_point = 0
         elif operation == "-":
-            self.label.setText(str(first-second))
+            self.label.setText("%.9s" %str(first-second))
             start = "0"
             first = 0
             second = 0
+            count_point = 0
         elif operation == "*":
-            self.label.setText(str(first*second))
+            self.label.setText("%.9s" %str(first*second))
             start = "0"
             first = 0
             second = 0
+            count_point = 0
         elif operation == "/" and second != 0:
-            self.label.setText(str(first/second))
+            self.label.setText("%.9s" %str(first/second))
             start = "0"
             first = 0
             second = 0
+            count_point = 0
     def square_it(self):
         global start
         if float(start) >= 0:
-            self.label.setText(str(float(start)**0.5))
+            self.label.setText("%.9s" %str(float(start)**0.5))
             start = "0"
+            count_point = 0
+    def memory(self, memcom):
+        global mem
+        global start
+        if memcom == "M+":
+            mem += float(start)
+            start = ""
+            self.label.setText(start)
+        elif memcom == "M-":
+            mem -= float(start)
+            start = ""
+            self.label.setText(start)
+        elif memcom == "MC":
+            mem = 0
+        elif memcom == "MR":
+            self.label.setText(str(mem))
+        elif memcom == "MS":
+            mem = mem        
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
