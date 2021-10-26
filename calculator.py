@@ -73,7 +73,7 @@ class Ui_MainWindow(object):
         self.divide = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.divide_it())
         self.divide.setGeometry(QtCore.QRect(130, 150, 31, 31))
         self.divide.setObjectName("divide")
-        self.percent = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("%"))
+        self.percent = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.percent_it())
         self.percent.setGeometry(QtCore.QRect(170, 150, 31, 31))
         self.percent.setObjectName("percent")
         self.eight = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.press_it("8"))
@@ -165,17 +165,6 @@ class Ui_MainWindow(object):
                 start += pressed
                 self.label.setText("%.9s" %start)
                 count_point += 1
-        elif pressed == "%":
-            new = float(start)/100
-            if operation == "+":
-                start = float(start)*(1+new)
-            elif operation == "-":
-                start = float(start)*(1-new)
-            elif operation == "*":
-                start = float(start)*new
-            elif operation == "/":
-                start = float(start)/new
-            self.label.setText("%.9s" %start)
         elif start == "0":
             start = pressed
             self.label.setText("%.9s" %start)
@@ -275,7 +264,14 @@ class Ui_MainWindow(object):
             self.label.setText(str(mem))
         elif memcom == "MS":
             mem = mem        
-
+    def percent_it(self):
+        global operation
+        if operation == "+":
+            self.label.setText("%.9s" %str(first*(1+float(start)/100)))
+            operation = ""
+        elif operation == "-":
+            self.label.setText("%.9s" %str(first*(1-float(start)/100)))
+            operation = ""
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Calculator"))
