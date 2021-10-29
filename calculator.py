@@ -14,7 +14,6 @@ start = "0"
 first = 0
 second = 0
 operation = ""
-count_point = 0
 mem = 0
 new = 0
 class Ui_MainWindow(object):
@@ -136,7 +135,6 @@ class Ui_MainWindow(object):
         global start
         global first
         global second
-        global count_point
         global new
         if pressed == "C":
             start = "0"
@@ -161,10 +159,11 @@ class Ui_MainWindow(object):
                 start = str(1/float(start))
                 self.label.setText("%.9s" %start)
         elif pressed == ".":
-            if count_point == 0:
+            if "." in self.label.text():
+                pass
+            else:
                 start += pressed
                 self.label.setText("%.9s" %start)
-                count_point += 1
         elif start == "0":
             start = pressed
             self.label.setText("%.9s" %start)
@@ -271,6 +270,12 @@ class Ui_MainWindow(object):
             operation = ""
         elif operation == "-":
             self.label.setText("%.9s" %str(first*(1-float(start)/100)))
+            operation = ""
+        elif operation == "*":
+            self.label.setText("%.9s" %str(first*float(start)/100))
+            operation = ""
+        elif operation == "/":
+            self.label.setText("%.9s" %str(first*100/float(start)))
             operation = ""
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
